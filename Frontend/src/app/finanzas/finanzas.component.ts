@@ -1,8 +1,8 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { categoriaResponse, categoriaSeleccionadaResponse} from '../modelos/responses';
+import { categoriaResponse, categoriaSeleccionadaResponse, IngresarResponse, RetirarResponse} from '../modelos/responses';
 
 @Component({
   selector: 'app-finanzas',
@@ -60,7 +60,7 @@ export class FinanzasComponent {
   
     this.http.post("http://127.0.0.1:8000/seleccionCategoria",datoCategoria).subscribe(
       {
-        next: res => this.mostrarError("Envio exitoso!!!!"),
+        next: res => this.mostrarError("Categoria recuperada exitosamente!!!!"),
         error: err => this.mostrarError("Error al enviar la Categoria")
       })
 
@@ -86,10 +86,10 @@ export class FinanzasComponent {
     this.hayError = false
     console.log(datosFormulario)
 
-    this.http.post("http://127.0.0.1:8000/ingresarDinero",datosFormulario).subscribe(
+    this.http.post<IngresarResponse>("http://127.0.0.1:8000/ingresarDinero",datosFormulario).subscribe(
       {
-        next: res=> this.mostrarError("Envio exitoso!!!!"),
-        error: err => this.mostrarError("Error al enviar el formulario")
+        next: res => this.completarRetirar(res.codigo,res.message),
+        error: err => this.completarRetirar(404,"Hubo un Error con el servidor, Intentalo nuevamente")
       })
 
     this.http.get<categoriaSeleccionadaResponse>("http://127.0.0.1:8000/listaHistorialCategorizado").subscribe(
@@ -114,13 +114,23 @@ export class FinanzasComponent {
     this.hayError = false
     console.log(datosFormulario)
 
-    this.http.post("http://127.0.0.1:8000/retirarDinero",datosFormulario).subscribe(
+    this.http.post<RetirarResponse>("http://127.0.0.1:8000/retirarDinero",datosFormulario).subscribe(
       {
-        next: res=> this.mostrarError("Envio exitoso!!!!"),
-        error: err => this.mostrarError("Error al enviar el formulario")
+        next: res => this.completarRetirar(res.codigo,res.message),
+        error: err => this.completarRetirar(404,"Hubo un Error con el servidor, Intentalo nuevamente")
       })
 
-    this.http.get<categoriaSeleccionadaResponse>("http://127.0.0.1:8000/listaHistorialCategorizado").subscribe(
+    
+  }
+
+  async completarRetirar(code:number,message:string){
+    this.responseCode = code
+    this.mensajeError = message
+    if(this.responseCode ==404){
+      this.hayError = true
+    }else{
+
+      this.http.get<categoriaSeleccionadaResponse>("http://127.0.0.1:8000/listaHistorialCategorizado").subscribe(
       {
         next:(res)=>{
           this.listaHistorialCategorizado = res.data
@@ -130,7 +140,10 @@ export class FinanzasComponent {
           console.log(error)
         }
       })
+
+    }
   }
+
 
   limpiarHistorial(dato:number){
 
@@ -143,8 +156,8 @@ export class FinanzasComponent {
 
     this.http.post("http://127.0.0.1:8000/limpiarHistorial",datosFormulario).subscribe(
       {
-        next: res=> this.mostrarError("Envio exitoso!!!!"),
-        error: err => this.mostrarError("Error al enviar el formulario")
+        next: res=> this.mostrarError("Datos eliminados correctamente!!!!"),
+        error: err => this.mostrarError("Error al limpiar el historial.")
       })
     
     this.http.get<categoriaSeleccionadaResponse>("http://127.0.0.1:8000/listaHistorialCategorizado").subscribe(
@@ -170,7 +183,7 @@ export class FinanzasComponent {
 
     this.http.post("http://127.0.0.1:8000/agregarCategoria",datosFormulario).subscribe(
       {
-        next: res=> this.mostrarError("Envio exitoso!!!!"),
+        next: res=> this.mostrarError("Categoria agregada exitosamente!!!!"),
         error: err => this.mostrarError("Error al enviar el formulario")
       })
 

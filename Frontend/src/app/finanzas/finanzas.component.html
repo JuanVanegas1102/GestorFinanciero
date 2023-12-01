@@ -276,6 +276,13 @@
               </td>
             </tr>
           </table>
+          <div
+            *ngIf="this.hayError"
+            class="alert alert-danger error"
+            role="alert"
+          >
+            {{ this.mensajeError }}
+          </div>
         </div>
         <div class="project-name-wrap">
           <button class="button-5 w-button" (click)="toggle()" id="bt">

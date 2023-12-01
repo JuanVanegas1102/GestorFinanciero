@@ -5,3 +5,13 @@ export interface categoriaResponse{
 export interface categoriaSeleccionadaResponse{
     data:Array<any>
 }
+
+export interface IngresarResponse{
+    message:string
+    codigo:number
+}
+
+export interface RetirarResponse{
+    message:string
+    codigo:number
+}

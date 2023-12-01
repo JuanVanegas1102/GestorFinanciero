@@ -1,3 +1,4 @@
+from datetime import datetime
 import oracledb
 import random
 
@@ -31,6 +32,7 @@ class ConexionBD:
         cursor.execute("select m.idmovimientocategoria, t.tipomovimiento, m.valormovimiento, m.valorfinal, TO_CHAR(m.fechamovimiento, 'yyyy-MM-dd') from historialmovimientos m, tipomovimiento t where t.tipomovimiento = m.tipomovimiento and m.idcategoria="+str(ConexionBD.seleccionCategoria)+" ORDER BY idmovimientocategoria")
         result = cursor.fetchall()
         connection.close()
+        print(result)
         return result
     
     def maximoMovimiento():
@@ -72,36 +74,52 @@ class ConexionBD:
         connection.close()
         return result[0][0]
     
+    def consultarUltimaFecha():
+        oracledb.init_oracle_client()
+        connection = oracledb.connect(user= ConexionBD.user, password=ConexionBD.password,host="localhost", port = ConexionBD.port, service_name="xe")
+        cursor = connection.cursor()
+        cursor.execute("Select TO_CHAR(fechamovimiento, 'yyyy-MM-dd') from (select fechamovimiento from historialmovimientos where idcategoria="+str(ConexionBD.seleccionCategoria)+"order by idmovimiento desc ) where rownum = 1")
+        result = cursor.fetchall()
+        connection.close()
+        print(result)
+        return result[0][0]
+    
     def ingresarDinero(valor,fecha):
         oracledb.init_oracle_client()
         connection = oracledb.connect(user=ConexionBD.user, password=ConexionBD.password,host="localhost", port = ConexionBD.port, service_name="xe")
         cursor = connection.cursor()
         ConexionBD.maximoMovimientoCategoria()
-        if ConexionBD.maximoMovimientoCategoria()== 1:
-            query = "INSERT INTO historialmovimientos values('"+str(ConexionBD.maximoMovimiento())+"','"+str(ConexionBD.seleccionCategoria)+"','Ingreso','"+str(ConexionBD.maximoMovimientoCategoria())+"','"+str(valor)+"','"+str(valor)+"',to_date('"+fecha+"','yyyy/mm/dd'))"
-            result = cursor.execute(query)
+        if str(ConexionBD.consultarUltimaFecha()) > fecha:
+            return False
         else:
-            valorfinal = ConexionBD.consultarValorFinal() + valor
-            query = "INSERT INTO historialmovimientos values('"+str(ConexionBD.maximoMovimiento())+"','"+str(ConexionBD.seleccionCategoria)+"','Ingreso','"+str(ConexionBD.maximoMovimientoCategoria())+"','"+str(valor)+"','"+str(valorfinal)+"',to_date('"+fecha+"','yyyy/mm/dd'))"
-            result = cursor.execute(query)
+            if ConexionBD.maximoMovimientoCategoria()== 1:
+                query = "INSERT INTO historialmovimientos values('"+str(ConexionBD.maximoMovimiento())+"','"+str(ConexionBD.seleccionCategoria)+"','Ingreso','"+str(ConexionBD.maximoMovimientoCategoria())+"','"+str(valor)+"','"+str(valor)+"',to_date('"+fecha+"','yyyy/mm/dd'))"
+                result = cursor.execute(query)
+            else:
+                valorfinal = ConexionBD.consultarValorFinal() + valor
+                query = "INSERT INTO historialmovimientos values('"+str(ConexionBD.maximoMovimiento())+"','"+str(ConexionBD.seleccionCategoria)+"','Ingreso','"+str(ConexionBD.maximoMovimientoCategoria())+"','"+str(valor)+"','"+str(valorfinal)+"',to_date('"+fecha+"','yyyy/mm/dd'))"
+                result = cursor.execute(query)
         connection.commit()
         connection.close()
-        return result
+        return True
     
     def retirarDinero(valor,fecha):
         oracledb.init_oracle_client()
         connection = oracledb.connect(user=ConexionBD.user, password=ConexionBD.password,host="localhost", port = ConexionBD.port, service_name="xe")
         cursor = connection.cursor()
         ConexionBD.maximoMovimientoCategoria()
-        if ConexionBD.consultarValorFinal()-valor < 0:
-            result = "No se puede retirar mas cantidad de la existente"
+        if str(ConexionBD.consultarUltimaFecha()) > fecha:
+            return False
         else:
-            valorfinal = ConexionBD.consultarValorFinal() - valor
-            query = "INSERT INTO historialmovimientos values('"+str(ConexionBD.maximoMovimiento())+"','"+str(ConexionBD.seleccionCategoria)+"','Egreso','"+str(ConexionBD.maximoMovimientoCategoria())+"','"+str(valor)+"','"+str(valorfinal)+"',to_date('"+fecha+"','yyyy/mm/dd'))"
-            result = cursor.execute(query)
+            if ConexionBD.consultarValorFinal()-valor < 0:
+                return False
+            else:
+                valorfinal = ConexionBD.consultarValorFinal() - valor
+                query = "INSERT INTO historialmovimientos values('"+str(ConexionBD.maximoMovimiento())+"','"+str(ConexionBD.seleccionCategoria)+"','Egreso','"+str(ConexionBD.maximoMovimientoCategoria())+"','"+str(valor)+"','"+str(valorfinal)+"',to_date('"+fecha+"','yyyy/mm/dd'))"
+                result = cursor.execute(query)
         connection.commit()
         connection.close()
-        return result
+        return True
     
     def limpiarHistorial(dato):
         oracledb.init_oracle_client()
