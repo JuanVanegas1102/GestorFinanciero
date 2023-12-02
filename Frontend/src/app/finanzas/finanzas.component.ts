@@ -3,6 +3,7 @@ import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { categoriaResponse, categoriaSeleccionadaResponse, IngresarResponse, RetirarResponse} from '../modelos/responses';
+import { NgxChartsModule } from '@swimlane/ngx-charts';
 
 @Component({
   selector: 'app-finanzas',

@@ -1,7 +1,10 @@
+import json
 from fastapi import FastAPI
 from fastapi.middleware import Middleware
+from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.encoders import jsonable_encoder
 
 from BD import ConexionBD
     
@@ -82,3 +85,8 @@ async def root(s:nuevaCategoria):
     result = ConexionBD.agregarCategoria(s.nombreCategoria)
     return {"message":"Enviada peticion"}
 
+@app.get('/listaDatosGraficas')
+async def root():
+    result = ConexionBD.consultarDatosGraficas()
+    print(result)
+    return {"data":result}

@@ -11,6 +11,7 @@ import { FinanzasComponent } from './finanzas/finanzas.component';
 import { GraficasComponent } from './graficas/graficas.component';
 import { DesarrolladoresComponent } from './desarrolladores/desarrolladores.component';
 import { DonacionesComponent } from './donaciones/donaciones.component';
+import { NgxChartsModule } from '@swimlane/ngx-charts';
 
 
 
@@ -32,7 +33,8 @@ import { DonacionesComponent } from './donaciones/donaciones.component';
         NgbModule,
         ReactiveFormsModule,
         HttpClientModule,
-        FormsModule
+        FormsModule,
+        NgxChartsModule
     ]
 })
 export class AppModule { }

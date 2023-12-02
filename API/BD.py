@@ -1,11 +1,13 @@
 from datetime import datetime
 import oracledb
 import random
+import sqlite3
+import json
 
 class ConexionBD:
 
-    user = "AdminGestor"
-    password = "AdminGestor"
+    user = "AdminFinanciero"
+    password = "AdminFinanciero"
     port = 1521
     seleccionCategoria = str
     
@@ -16,6 +18,7 @@ class ConexionBD:
         cursor = connection.cursor()
         cursor.execute("select idcategoria, nombrecategoria from categoria where idcategoria NOT LIKE '0'")
         result = cursor.fetchall()
+        print(result)
         connection.close()
         return result
     
@@ -82,7 +85,10 @@ class ConexionBD:
         result = cursor.fetchall()
         connection.close()
         print(result)
-        return result[0][0]
+        if result == []:
+            return 0
+        else:
+            return result[0][0]
     
     def ingresarDinero(valor,fecha):
         oracledb.init_oracle_client()
@@ -141,4 +147,13 @@ class ConexionBD:
         connection.close()
         return result
     
-    
+    def consultarDatosGraficas():
+        oracledb.init_oracle_client()
+        connection = oracledb.connect(user= ConexionBD.user, password=ConexionBD.password,host="localhost", port = ConexionBD.port, service_name="xe")
+        cursor = connection.cursor()
+        #cursor.execute("select json_object('Fecha' VALUE TO_CHAR(m.fechamovimiento, 'yyyy-MM-dd'), 'Valor' VALUE m.valorfinal ) from historialmovimientos m, tipomovimiento t where t.tipomovimiento = m.tipomovimiento and m.idcategoria="+str(ConexionBD.seleccionCategoria)+" ORDER BY idmovimientocategoria")
+        cursor.execute("select TO_CHAR(m.fechamovimiento, 'yyyy-MM-dd'), m.valorfinal from historialmovimientos m, tipomovimiento t where t.tipomovimiento = m.tipomovimiento and m.idcategoria="+str(ConexionBD.seleccionCategoria)+" ORDER BY idmovimientocategoria")
+        result = cursor.fetchall()
+        connection.close()
+        print(result)
+        return result

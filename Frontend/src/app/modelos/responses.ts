@@ -15,3 +15,8 @@ export interface RetirarResponse{
     message:string
     codigo:number
 }
+
+export interface DatosResponse{
+    name: string,
+    value: number
+}

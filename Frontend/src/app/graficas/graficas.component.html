@@ -191,6 +191,7 @@
             id="field"
             class="select-field w-select"
             formControlName="idcategoria"
+            (change)="cambiarCategoria($event)"
           >
             <option [ngValue]="null" disabled selected>
               Selecciona una categoria
@@ -208,23 +209,20 @@
           <h1 class="heading-3">Espacio destinado para las graficas</h1>
         </div>
         <div class="w-dyn-list">
-          <div role="list" class="blog-list-wrap w-dyn-items">
-            <div role="listitem" class="blog-item w-dyn-item">
-              <div class="blog-summary-wrap"></div>
-            </div>
-            <div role="listitem" class="blog-item w-dyn-item">
-              <div class="blog-summary-wrap"></div>
-            </div>
-            <div role="listitem" class="blog-item w-dyn-item">
-              <div class="blog-summary-wrap"></div>
-            </div>
-            <div role="listitem" class="blog-item w-dyn-item">
-              <div class="blog-summary-wrap"></div>
-            </div>
-            <div role="listitem" class="blog-item w-dyn-item">
-              <div class="blog-summary-wrap"></div>
-            </div>
-          </div>
+          <ngx-charts-bar-vertical
+            [view]="[1000, 400]"
+            [results]="listaDatosGraficas"
+            [xAxisLabel]="'Fecha'"
+            [legendTitle]="'Dinero en la categoria por fecha'"
+            [yAxisLabel]="'Valor Final'"
+            [legend]="true"
+            [showXAxisLabel]="true"
+            [showYAxisLabel]="true"
+            [xAxis]="true"
+            [yAxis]="true"
+            [gradient]="true"
+          >
+          </ngx-charts-bar-vertical>
         </div>
       </div>
     </div>
