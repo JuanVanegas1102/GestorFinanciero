@@ -2,7 +2,7 @@ import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { categoriaResponse, categoriaSeleccionadaResponse, IngresarResponse, RetirarResponse} from '../modelos/responses';
+import { categoriaResponse, categoriaSeleccionadaResponse, EliminarCatResponse, IngresarResponse, RetirarResponse} from '../modelos/responses';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
 
 @Component({
@@ -21,6 +21,7 @@ export class FinanzasComponent {
   responseCode!: number;
   hayError:boolean = false;
   public show:boolean = false;
+  public show2:boolean = false;
   public buttonName:any = 'Show';
 
   constructor(private http : HttpClient,private  fb:FormBuilder, private router:Router)
@@ -200,6 +201,41 @@ export class FinanzasComponent {
         })
   }
 
+  eliminarCategoria(dato:number){
+    
+    const datosFormulario = {
+      dato:dato,
+    }
+
+    this.hayError = false
+    console.log(datosFormulario)
+
+    this.http.post<EliminarCatResponse>("http://127.0.0.1:8000/eliminarCategoria",datosFormulario).subscribe(
+      {
+        next: res => this.completarRetirar(res.codigo,res.message),
+        error: err => this.completarRetirar(404,"Hubo un Error con el servidor, Intentalo nuevamente")
+      })
+
+    
+  }
+
+  cambiarCategoriaEliminar(value:any){
+
+    const datoCategoria = { 
+      seleccionCategoria: value.target.value
+    }
+
+    this.hayError = false;
+    console.log(datoCategoria);
+  
+    this.http.post("http://127.0.0.1:8000/seleccionCategoriaEliminar",datoCategoria).subscribe(
+      {
+        next: res => this.mostrarError("Categoria a Eliminar recuperada exitosamente!!!!"),
+        error: err => this.mostrarError("Error al enviar la Categoria a Eliminar")
+      })
+  }
+
+
   crearFormularioIngresar(){
     this.formularioIngresar = this.fb.group({
       valor:['',Validators.required],
@@ -219,11 +255,22 @@ export class FinanzasComponent {
     })
   }
 
+
   toggle() {
     this.show = !this.show;
 
     // Change the name of the button.
     if(this.show)  
+      this.buttonName = "Hide";
+    else
+      this.buttonName = "Show";
+  }
+
+  toggle2() {
+    this.show2 = !this.show2;
+
+    // Change the name of the button.
+    if(this.show2)  
       this.buttonName = "Hide";
     else
       this.buttonName = "Show";

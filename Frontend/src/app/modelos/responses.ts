@@ -16,7 +16,16 @@ export interface RetirarResponse{
     codigo:number
 }
 
+export interface EliminarCatResponse{
+    message:string
+    codigo:number
+}
+
 export interface DatosResponse{
     name: string,
     value: number
+}
+
+export interface DatosPastelResponse{
+    data:Array<any>
 }

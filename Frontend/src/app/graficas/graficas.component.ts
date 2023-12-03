@@ -1,9 +1,9 @@
 import { Component } from '@angular/core';
-import { DatosResponse, categoriaResponse, categoriaSeleccionadaResponse } from '../modelos/responses';
+import { DatosPastelResponse, DatosResponse, categoriaResponse, categoriaSeleccionadaResponse } from '../modelos/responses';
 import { HttpClient } from '@angular/common/http';
 import { FormBuilder } from '@angular/forms';
 import { Router } from '@angular/router';
-import { NgxChartsModule } from '@swimlane/ngx-charts';
+import { Color, NgxChartsModule, ScaleType } from '@swimlane/ngx-charts';
 
 @Component({
   selector: 'app-graficas',
@@ -17,11 +17,22 @@ export class GraficasComponent {
   ];
   listaDatosGraficas: any[ ]= [];
   dataset: any[ ]= [];
-  single: any [] = []
+  datasetPastel: any[ ]= [];
+  listaDatosPastel: any[ ]= [];
   mensajeError!: string;
   responseCode!: number;
   hayError:boolean = false;
-  otro2: any [] = [];
+
+  // options
+  showLegend: boolean = true;
+  showLabels: boolean = true;
+
+  colorScheme: Color = {
+    name: 'myScheme',
+    selectable: true,
+    group: ScaleType.Ordinal,
+    domain: ['#5AA454', '#E44D25', '#CFC0BB', '#7aa3e5', '#a8385d', '#aae3f5'],
+  };
 
 
   constructor(private http : HttpClient,private  fb:FormBuilder, private router:Router, private chart:NgxChartsModule)
@@ -35,6 +46,24 @@ export class GraficasComponent {
         next:(res)=>{
           this.listaCategoria = res.data
           console.log(this.listaCategoria)
+        },
+        error: (error) => {
+          console.log(error)
+        }
+      })
+
+
+      this.http.get<DatosPastelResponse>("http://127.0.0.1:8000/listaDatosPastel").subscribe(
+      {
+        next:(res)=>{
+          
+          for (let i=0;i<res.data.length;i++){
+            console.log(typeof(res.data[i][0]))
+            this.datasetPastel.push({name: res.data[i][0],value: res.data[i][1]});
+          }
+          this.listaDatosPastel = this.datasetPastel
+          console.log(this.listaDatosGraficas)
+          console.log(this.datasetPastel)
         },
         error: (error) => {
           console.log(error)
@@ -56,6 +85,8 @@ export class GraficasComponent {
 
     this.hayError = false;
     console.log(datoCategoria);
+    this.listaDatosGraficas = [];
+    this.dataset = [];
   
     this.http.post("http://127.0.0.1:8000/seleccionCategoria",datoCategoria).subscribe(
       {

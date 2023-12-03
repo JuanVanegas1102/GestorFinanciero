@@ -24,7 +24,9 @@ class seleccionCategoria(BaseModel):
     
 class limpiar(BaseModel):
     dato: str
-
+    
+class eliminacionCategoria(BaseModel):
+    dato: str
 
 app = FastAPI()
 
@@ -50,6 +52,12 @@ async def root(s:seleccionCategoria):
     result = ConexionBD.guardarCategoriaSeleccionada(s.seleccionCategoria)
     return {"message":"Enviada peticion"}
 
+@app.post('/seleccionCategoriaEliminar')
+async def root(s:seleccionCategoria):
+    result = ConexionBD.EliminarCategoriaSeleccionada(s.seleccionCategoria)
+    return {"message":"Enviada peticion"}
+
+
 @app.get('/listaHistorialCategorizado')
 async def root():
     result = ConexionBD.consultarHistorialCategoria()
@@ -63,6 +71,16 @@ async def root(s:dinero):
                 "codigo" : 202}
     else:
         return {"message":"No se puede ingresar una fecha anterior a la del ultimo movimiento",
+                "codigo" : 404}
+
+@app.post('/eliminarCategoria')
+async def root(s:eliminacionCategoria):
+    valid = ConexionBD.eliminarCategoria(s.dato)
+    if valid:
+        return {"message":"Categoria eliminada exitosamente",
+                "codigo" : 202}
+    else:
+        return {"message":"No se puede eliminar categoria ya que esta tiene datos registrados.",
                 "codigo" : 404}
 
 @app.post('/retirarDinero')
@@ -88,5 +106,11 @@ async def root(s:nuevaCategoria):
 @app.get('/listaDatosGraficas')
 async def root():
     result = ConexionBD.consultarDatosGraficas()
+    print(result)
+    return {"data":result}
+
+@app.get('/listaDatosPastel')
+async def root():
+    result = ConexionBD.consultarDatosPastel()
     print(result)
     return {"data":result}

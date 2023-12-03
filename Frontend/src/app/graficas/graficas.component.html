@@ -184,6 +184,7 @@
       <div class="container">
         <div class="section-heading-wrap">
           <h2>Genera tus graficos</h2>
+          <h4>Selecciona la categoria a graficar</h4>
         </div>
         <div class="w-form">
           <select
@@ -204,16 +205,17 @@
             </option>
           </select>
         </div>
-        <a href="#" class="button-6 w-button">Crear Grafica</a>
         <div class="w-layout-blockcontainer w-container">
-          <h1 class="heading-3">Espacio destinado para las graficas</h1>
+          <h1 class="heading-3">
+            Espacio destinado para las graficas Categorizadas
+          </h1>
         </div>
         <div class="w-dyn-list">
           <ngx-charts-bar-vertical
             [view]="[1000, 400]"
             [results]="listaDatosGraficas"
             [xAxisLabel]="'Fecha'"
-            [legendTitle]="'Dinero en la categoria por fecha'"
+            [legendTitle]="'Dinero total por fecha'"
             [yAxisLabel]="'Valor Final'"
             [legend]="true"
             [showXAxisLabel]="true"
@@ -223,6 +225,20 @@
             [gradient]="true"
           >
           </ngx-charts-bar-vertical>
+        </div>
+        <div class="w-layout-blockcontainer w-container">
+          <h1 class="heading-3">
+            Espacio destinado para las graficas Generales
+          </h1>
+        </div>
+        <div class="w-dyn-list">
+          Cantidad de movimientos totales por categoria
+
+          <ngx-charts-pie-grid
+            [view]="[500, 400]"
+            [scheme]="colorScheme"
+            [results]="listaDatosPastel"
+          ></ngx-charts-pie-grid>
         </div>
       </div>
     </div>

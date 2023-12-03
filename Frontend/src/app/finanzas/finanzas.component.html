@@ -306,7 +306,32 @@
               </form>
             </ng-container>
           </div>
-          <a href="#" class="button-4 w-button">Eliminar categoría</a>
+          <a class="button-4 w-button" (click)="toggle2()" id="bt"
+            >Eliminar categoría</a
+          >
+          <div>
+            <ng-container *ngIf="show2">
+              <select
+                name="size"
+                id="size"
+                formControlName="idcategoria"
+                (change)="cambiarCategoriaEliminar($event)"
+              >
+                <option [ngValue]="null" disabled selected>
+                  Selecciona una categoria
+                </option>
+                <option
+                  *ngFor="let categoria of listaCategoria"
+                  [ngValue]="categoria[0]"
+                >
+                  {{ categoria[1] }}
+                </option>
+              </select>
+              <button class="btn" (click)="eliminarCategoria(1)">
+                Eliminar Categoria
+              </button>
+            </ng-container>
+          </div>
         </div>
       </div>
     </div>
