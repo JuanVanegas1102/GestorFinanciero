@@ -6,8 +6,8 @@ import json
 
 class ConexionBD:
 
-    user = "AdminFinanciero"
-    password = "AdminFinanciero"
+    user = "AdminGestor"
+    password = "AdminGestor"
     port = 1521
     seleccionCategoria = str
     seleccionCategoriaEliminar = str
@@ -16,7 +16,7 @@ class ConexionBD:
       
     def consultarCategoria():
         oracledb.init_oracle_client()
-        connection = oracledb.connect(user= ConexionBD.user, password=ConexionBD.password,host="localhost", port = ConexionBD.port, service_name="xe")
+        connection = oracledb.connect(user= ConexionBD.user, password=ConexionBD.password,host="localhost", port = ConexionBD.port, service_name="xepdb1")
         cursor = connection.cursor()
         cursor.execute("select idcategoria, nombrecategoria from categoria where idcategoria NOT LIKE '0'")
         result = cursor.fetchall()
@@ -44,7 +44,7 @@ class ConexionBD:
 
     def consultarHistorialCategoria():
         oracledb.init_oracle_client()
-        connection = oracledb.connect(user= ConexionBD.user, password=ConexionBD.password,host="localhost", port = ConexionBD.port, service_name="xe")
+        connection = oracledb.connect(user= ConexionBD.user, password=ConexionBD.password,host="localhost", port = ConexionBD.port, service_name="xepdb1")
         cursor = connection.cursor()
         cursor.execute("select m.idmovimientocategoria, t.tipomovimiento, m.valormovimiento, m.valorfinal, TO_CHAR(m.fechamovimiento, 'yyyy-MM-dd') from historialmovimientos m, tipomovimiento t where t.tipomovimiento = m.tipomovimiento and m.idcategoria="+str(ConexionBD.seleccionCategoria)+" ORDER BY idmovimientocategoria")
         result = cursor.fetchall()
@@ -54,7 +54,7 @@ class ConexionBD:
     
     def maximoMovimiento():
         oracledb.init_oracle_client()
-        connection = oracledb.connect(user= ConexionBD.user, password=ConexionBD.password,host="localhost", port = ConexionBD.port, service_name="xe")
+        connection = oracledb.connect(user= ConexionBD.user, password=ConexionBD.password,host="localhost", port = ConexionBD.port, service_name="xepdb1")
         cursor = connection.cursor()
         cursor.execute("SELECT MAX(idmovimiento)+1 FROM historialmovimientos")
         result = cursor.fetchall()
@@ -64,7 +64,7 @@ class ConexionBD:
     
     def maximaCategoria():
         oracledb.init_oracle_client()
-        connection = oracledb.connect(user= ConexionBD.user, password=ConexionBD.password,host="localhost", port = ConexionBD.port, service_name="xe")
+        connection = oracledb.connect(user= ConexionBD.user, password=ConexionBD.password,host="localhost", port = ConexionBD.port, service_name="xepdb1")
         cursor = connection.cursor()
         cursor.execute("SELECT MAX(idcategoria)+1 FROM categoria")
         result = cursor.fetchall()
@@ -74,7 +74,7 @@ class ConexionBD:
     
     def maximoMovimientoCategoria():
         oracledb.init_oracle_client()
-        connection = oracledb.connect(user= ConexionBD.user, password=ConexionBD.password,host="localhost", port = ConexionBD.port, service_name="xe")
+        connection = oracledb.connect(user= ConexionBD.user, password=ConexionBD.password,host="localhost", port = ConexionBD.port, service_name="xepdb1")
         cursor = connection.cursor()
         cursor.execute("SELECT COUNT(idmovimientocategoria)+1 FROM historialmovimientos where idcategoria = "+str(ConexionBD.seleccionCategoria))
         result = cursor.fetchall()
@@ -84,7 +84,7 @@ class ConexionBD:
     
     def maximoMovimientoCategoriaTransferir():
         oracledb.init_oracle_client()
-        connection = oracledb.connect(user= ConexionBD.user, password=ConexionBD.password,host="localhost", port = ConexionBD.port, service_name="xe")
+        connection = oracledb.connect(user= ConexionBD.user, password=ConexionBD.password,host="localhost", port = ConexionBD.port, service_name="xepdb1")
         cursor = connection.cursor()
         cursor.execute("SELECT COUNT(idmovimientocategoria)+1 FROM historialmovimientos where idcategoria = "+str(ConexionBD.seleccionCategoriaTransferir))
         result = cursor.fetchall()
@@ -94,7 +94,7 @@ class ConexionBD:
     
     def maximoMovimientoCategoriaEliminar():
         oracledb.init_oracle_client()
-        connection = oracledb.connect(user= ConexionBD.user, password=ConexionBD.password,host="localhost", port = ConexionBD.port, service_name="xe")
+        connection = oracledb.connect(user= ConexionBD.user, password=ConexionBD.password,host="localhost", port = ConexionBD.port, service_name="xepdb1")
         cursor = connection.cursor()
         cursor.execute("SELECT COUNT(idmovimientocategoria)+1 FROM historialmovimientos where idcategoria = "+str(ConexionBD.seleccionCategoriaEliminar))
         result = cursor.fetchall()
@@ -104,7 +104,7 @@ class ConexionBD:
     
     def consultarValorFinal():
         oracledb.init_oracle_client()
-        connection = oracledb.connect(user= ConexionBD.user, password=ConexionBD.password,host="localhost", port = ConexionBD.port, service_name="xe")
+        connection = oracledb.connect(user= ConexionBD.user, password=ConexionBD.password,host="localhost", port = ConexionBD.port, service_name="xepdb1")
         cursor = connection.cursor()
         cursor.execute("Select valorfinal from (select valorfinal from historialmovimientos where idcategoria="+str(ConexionBD.seleccionCategoria)+"order by idmovimiento desc ) where rownum = 1")
         result = cursor.fetchall()
@@ -113,7 +113,7 @@ class ConexionBD:
     
     def consultarValorFinalTransferir():
         oracledb.init_oracle_client()
-        connection = oracledb.connect(user= ConexionBD.user, password=ConexionBD.password,host="localhost", port = ConexionBD.port, service_name="xe")
+        connection = oracledb.connect(user= ConexionBD.user, password=ConexionBD.password,host="localhost", port = ConexionBD.port, service_name="xepdb1")
         cursor = connection.cursor()
         cursor.execute("Select valorfinal from (select valorfinal from historialmovimientos where idcategoria="+str(ConexionBD.seleccionCategoriaTransferir)+"order by idmovimiento desc ) where rownum = 1")
         result = cursor.fetchall()
@@ -122,7 +122,7 @@ class ConexionBD:
     
     def consultarUltimaFecha():
         oracledb.init_oracle_client()
-        connection = oracledb.connect(user= ConexionBD.user, password=ConexionBD.password,host="localhost", port = ConexionBD.port, service_name="xe")
+        connection = oracledb.connect(user= ConexionBD.user, password=ConexionBD.password,host="localhost", port = ConexionBD.port, service_name="xepdb1")
         cursor = connection.cursor()
         cursor.execute("Select TO_CHAR(fechamovimiento, 'yyyy-MM-dd') from (select fechamovimiento from historialmovimientos where idcategoria="+str(ConexionBD.seleccionCategoria)+"order by idmovimiento desc ) where rownum = 1")
         result = cursor.fetchall()
@@ -135,7 +135,7 @@ class ConexionBD:
     
     def ingresarDinero(valor,fecha):
         oracledb.init_oracle_client()
-        connection = oracledb.connect(user=ConexionBD.user, password=ConexionBD.password,host="localhost", port = ConexionBD.port, service_name="xe")
+        connection = oracledb.connect(user=ConexionBD.user, password=ConexionBD.password,host="localhost", port = ConexionBD.port, service_name="xepdb1")
         cursor = connection.cursor()
         ConexionBD.maximoMovimientoCategoria()
         if str(ConexionBD.consultarUltimaFecha()) > fecha:
@@ -154,7 +154,7 @@ class ConexionBD:
     
     def ingresarDineroTransferido(valor,fecha):
         oracledb.init_oracle_client()
-        connection = oracledb.connect(user=ConexionBD.user, password=ConexionBD.password,host="localhost", port = ConexionBD.port, service_name="xe")
+        connection = oracledb.connect(user=ConexionBD.user, password=ConexionBD.password,host="localhost", port = ConexionBD.port, service_name="xepdb1")
         cursor = connection.cursor()
         ConexionBD.maximoMovimientoCategoria()
         if ConexionBD.retirarDinero(valor,fecha) == False:
@@ -176,7 +176,7 @@ class ConexionBD:
     
     def retirarDinero(valor,fecha):
         oracledb.init_oracle_client()
-        connection = oracledb.connect(user=ConexionBD.user, password=ConexionBD.password,host="localhost", port = ConexionBD.port, service_name="xe")
+        connection = oracledb.connect(user=ConexionBD.user, password=ConexionBD.password,host="localhost", port = ConexionBD.port, service_name="xepdb1")
         cursor = connection.cursor()
         ConexionBD.maximoMovimientoCategoria()
         if str(ConexionBD.consultarUltimaFecha()) > fecha:
@@ -194,7 +194,7 @@ class ConexionBD:
     
     def limpiarHistorial(dato):
         oracledb.init_oracle_client()
-        connection = oracledb.connect(user=ConexionBD.user, password=ConexionBD.password,host="localhost", port = ConexionBD.port, service_name="xe")
+        connection = oracledb.connect(user=ConexionBD.user, password=ConexionBD.password,host="localhost", port = ConexionBD.port, service_name="xepdb1")
         cursor = connection.cursor()
         query = "DELETE FROM historialmovimientos WHERE idcategoria ="+ConexionBD.seleccionCategoria
         result = cursor.execute(query)
@@ -204,7 +204,7 @@ class ConexionBD:
     
     def agregarCategoria(nombreCategoria):
         oracledb.init_oracle_client()
-        connection = oracledb.connect(user=ConexionBD.user, password=ConexionBD.password,host="localhost", port = ConexionBD.port, service_name="xe")
+        connection = oracledb.connect(user=ConexionBD.user, password=ConexionBD.password,host="localhost", port = ConexionBD.port, service_name="xepdb1")
         cursor = connection.cursor()
         query = "INSERT INTO categoria values('"+str(ConexionBD.maximaCategoria())+"','"+nombreCategoria+"')"
         result = cursor.execute(query)
@@ -214,7 +214,7 @@ class ConexionBD:
     
     def consultarDatosGraficas():
         oracledb.init_oracle_client()
-        connection = oracledb.connect(user= ConexionBD.user, password=ConexionBD.password,host="localhost", port = ConexionBD.port, service_name="xe")
+        connection = oracledb.connect(user= ConexionBD.user, password=ConexionBD.password,host="localhost", port = ConexionBD.port, service_name="xepdb1")
         cursor = connection.cursor()
         cursor.execute("select TO_CHAR(m.fechamovimiento, 'yyyy-MM-dd'), m.valorfinal from historialmovimientos m, tipomovimiento t where t.tipomovimiento = m.tipomovimiento and m.idcategoria="+str(ConexionBD.seleccionCategoria)+" ORDER BY idmovimientocategoria")
         result = cursor.fetchall()
@@ -224,7 +224,7 @@ class ConexionBD:
     
     def eliminarCategoria(dato):
         oracledb.init_oracle_client()
-        connection = oracledb.connect(user=ConexionBD.user, password=ConexionBD.password,host="localhost", port = ConexionBD.port, service_name="xe")
+        connection = oracledb.connect(user=ConexionBD.user, password=ConexionBD.password,host="localhost", port = ConexionBD.port, service_name="xepdb1")
         cursor = connection.cursor()
         if ConexionBD.maximoMovimientoCategoriaEliminar() > 1:
             return False
@@ -237,7 +237,7 @@ class ConexionBD:
     
     def consultarDatosPastel():
         oracledb.init_oracle_client()
-        connection = oracledb.connect(user= ConexionBD.user, password=ConexionBD.password,host="localhost", port = ConexionBD.port, service_name="xe")
+        connection = oracledb.connect(user= ConexionBD.user, password=ConexionBD.password,host="localhost", port = ConexionBD.port, service_name="xepdb1")
         cursor = connection.cursor()
         cursor.execute("select c.nombrecategoria, MAX(m.idmovimientocategoria) from historialmovimientos m, categoria c where c.idcategoria = m.idcategoria GROUP BY c.nombrecategoria")
         result = cursor.fetchall()
