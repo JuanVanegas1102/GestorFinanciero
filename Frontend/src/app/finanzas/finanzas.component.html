@@ -275,6 +275,46 @@
                 </button>
               </td>
             </tr>
+            <tr>
+              <td colspan="6">
+                <form novalidate [formGroup]="formularioTransferir">
+                  <input
+                    type="number"
+                    placeholder="Valor a Transferir"
+                    formControlName="valor"
+                  />
+                  <input
+                    type="date"
+                    value="2018-07-22"
+                    formControlName="fecha"
+                  />
+                  Categoria a transferir:
+                  <select
+                    name="size"
+                    id="size"
+                    formControlName="idcategoria"
+                    (change)="cambiarCategoriaTransferir($event)"
+                  >
+                    <option [ngValue]="null" disabled selected>
+                      Selecciona una categoria
+                    </option>
+                    <option
+                      *ngFor="let categoria of listaCategoria"
+                      [ngValue]="categoria[0]"
+                    >
+                      {{ categoria[1] }}
+                    </option>
+                  </select>
+                  <button
+                    [disabled]="!formularioTransferir.valid"
+                    class="btn"
+                    (click)="transferirDinero()"
+                  >
+                    Transferir a otra categoria
+                  </button>
+                </form>
+              </td>
+            </tr>
           </table>
           <div
             *ngIf="this.hayError"

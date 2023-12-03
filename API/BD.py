@@ -11,6 +11,7 @@ class ConexionBD:
     port = 1521
     seleccionCategoria = str
     seleccionCategoriaEliminar = str
+    seleccionCategoriaTransferir = str
     
       
     def consultarCategoria():
@@ -32,6 +33,12 @@ class ConexionBD:
     def EliminarCategoriaSeleccionada(seleccionCategoria):
         seleccionCategoria = seleccionCategoria[-1:]
         ConexionBD.seleccionCategoriaEliminar = seleccionCategoria
+        print(seleccionCategoria)
+        return seleccionCategoria
+    
+    def guardarCategoriaTransferir(seleccionCategoria):
+        seleccionCategoria = seleccionCategoria[-1:]
+        ConexionBD.seleccionCategoriaTransferir = seleccionCategoria
         print(seleccionCategoria)
         return seleccionCategoria
 
@@ -75,6 +82,16 @@ class ConexionBD:
         connection.close()
         return result[0][0]
     
+    def maximoMovimientoCategoriaTransferir():
+        oracledb.init_oracle_client()
+        connection = oracledb.connect(user= ConexionBD.user, password=ConexionBD.password,host="localhost", port = ConexionBD.port, service_name="xe")
+        cursor = connection.cursor()
+        cursor.execute("SELECT COUNT(idmovimientocategoria)+1 FROM historialmovimientos where idcategoria = "+str(ConexionBD.seleccionCategoriaTransferir))
+        result = cursor.fetchall()
+        print(result)
+        connection.close()
+        return result[0][0]
+    
     def maximoMovimientoCategoriaEliminar():
         oracledb.init_oracle_client()
         connection = oracledb.connect(user= ConexionBD.user, password=ConexionBD.password,host="localhost", port = ConexionBD.port, service_name="xe")
@@ -90,6 +107,15 @@ class ConexionBD:
         connection = oracledb.connect(user= ConexionBD.user, password=ConexionBD.password,host="localhost", port = ConexionBD.port, service_name="xe")
         cursor = connection.cursor()
         cursor.execute("Select valorfinal from (select valorfinal from historialmovimientos where idcategoria="+str(ConexionBD.seleccionCategoria)+"order by idmovimiento desc ) where rownum = 1")
+        result = cursor.fetchall()
+        connection.close()
+        return result[0][0]
+    
+    def consultarValorFinalTransferir():
+        oracledb.init_oracle_client()
+        connection = oracledb.connect(user= ConexionBD.user, password=ConexionBD.password,host="localhost", port = ConexionBD.port, service_name="xe")
+        cursor = connection.cursor()
+        cursor.execute("Select valorfinal from (select valorfinal from historialmovimientos where idcategoria="+str(ConexionBD.seleccionCategoriaTransferir)+"order by idmovimiento desc ) where rownum = 1")
         result = cursor.fetchall()
         connection.close()
         return result[0][0]
@@ -125,6 +151,28 @@ class ConexionBD:
         connection.commit()
         connection.close()
         return True
+    
+    def ingresarDineroTransferido(valor,fecha):
+        oracledb.init_oracle_client()
+        connection = oracledb.connect(user=ConexionBD.user, password=ConexionBD.password,host="localhost", port = ConexionBD.port, service_name="xe")
+        cursor = connection.cursor()
+        ConexionBD.maximoMovimientoCategoria()
+        if ConexionBD.retirarDinero(valor,fecha) == False:
+            return False
+        else:
+            if str(ConexionBD.consultarUltimaFecha()) > fecha:
+                return False
+            else:
+                if ConexionBD.maximoMovimientoCategoriaTransferir()== 1:
+                    query = "INSERT INTO historialmovimientos values('"+str(ConexionBD.maximoMovimiento())+"','"+str(ConexionBD.seleccionCategoriaTransferir)+"','Ingreso','"+str(ConexionBD.maximoMovimientoCategoriaTransferir())+"','"+str(valor)+"','"+str(valor)+"',to_date('"+fecha+"','yyyy/mm/dd'))"
+                    result = cursor.execute(query)
+                else:
+                    valorfinal = ConexionBD.consultarValorFinalTransferir() + valor
+                    query = "INSERT INTO historialmovimientos values('"+str(ConexionBD.maximoMovimiento())+"','"+str(ConexionBD.seleccionCategoriaTransferir)+"','Ingreso','"+str(ConexionBD.maximoMovimientoCategoriaTransferir())+"','"+str(valor)+"','"+str(valorfinal)+"',to_date('"+fecha+"','yyyy/mm/dd'))"
+                    result = cursor.execute(query)
+            connection.commit()
+            connection.close()
+            return True
     
     def retirarDinero(valor,fecha):
         oracledb.init_oracle_client()

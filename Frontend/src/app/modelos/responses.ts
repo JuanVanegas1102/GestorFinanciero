@@ -11,6 +11,11 @@ export interface IngresarResponse{
     codigo:number
 }
 
+export interface TransferirResponse{
+    message:string
+    codigo:number
+}
+
 export interface RetirarResponse{
     message:string
     codigo:number

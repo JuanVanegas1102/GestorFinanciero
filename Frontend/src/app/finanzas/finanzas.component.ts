@@ -2,7 +2,7 @@ import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { categoriaResponse, categoriaSeleccionadaResponse, EliminarCatResponse, IngresarResponse, RetirarResponse} from '../modelos/responses';
+import { categoriaResponse, categoriaSeleccionadaResponse, EliminarCatResponse, IngresarResponse, RetirarResponse, TransferirResponse} from '../modelos/responses';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
 
 @Component({
@@ -16,6 +16,7 @@ export class FinanzasComponent {
   listaHistorialCategorizado: Array<any> = [];
   formularioIngresar!: FormGroup;
   formularioRetirar!: FormGroup;
+  formularioTransferir!: FormGroup;
   formularioCategoria!: FormGroup;
   mensajeError!: string;
   responseCode!: number;
@@ -43,6 +44,7 @@ export class FinanzasComponent {
 
       this.crearFormularioIngresar()
       this.crearFormularioRetirar()
+      this.crearFormularioTransferir()
       this.crearFormularioCategoria()
   }
 
@@ -235,6 +237,51 @@ export class FinanzasComponent {
       })
   }
 
+  cambiarCategoriaTransferir(value:any){
+
+    const datoCategoria = { 
+      seleccionCategoria: value.target.value
+    }
+
+    this.hayError = false;
+    console.log(datoCategoria);
+  
+    this.http.post("http://127.0.0.1:8000/seleccionCategoriaTransferir",datoCategoria).subscribe(
+      {
+        next: res => this.mostrarError("Categoria a Transferir recuperada exitosamente!!!!"),
+        error: err => this.mostrarError("Error al enviar la Categoria a Transferir")
+      })
+  }
+
+  transferirDinero(){
+    
+    const datosFormulario = {
+      valor:this.formularioTransferir.value.valor,
+      fecha:this.formularioTransferir.value.fecha
+    }
+
+    this.hayError = false
+    console.log(datosFormulario)
+
+    this.http.post<TransferirResponse>("http://127.0.0.1:8000/transferirDinero",datosFormulario).subscribe(
+      {
+        next: res => this.completarRetirar(res.codigo,res.message),
+        error: err => this.completarRetirar(404,"Hubo un Error con el servidor, Intentalo nuevamente")
+      })
+    
+    this.http.get<categoriaSeleccionadaResponse>("http://127.0.0.1:8000/listaHistorialCategorizado").subscribe(
+      {
+        next:(res)=>{
+          this.listaHistorialCategorizado = res.data
+          console.log(this.listaHistorialCategorizado)
+        },
+        error: (error) => {
+          console.log(error)
+        }
+      })
+  }
+
+
 
   crearFormularioIngresar(){
     this.formularioIngresar = this.fb.group({
@@ -244,6 +291,12 @@ export class FinanzasComponent {
   }
   crearFormularioRetirar(){
     this.formularioRetirar = this.fb.group({
+      valor:['',Validators.required],
+      fecha:['',Validators.required]
+    })
+  }
+  crearFormularioTransferir(){
+    this.formularioTransferir = this.fb.group({
       valor:['',Validators.required],
       fecha:['',Validators.required]
     })

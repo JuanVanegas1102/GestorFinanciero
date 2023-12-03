@@ -57,6 +57,10 @@ async def root(s:seleccionCategoria):
     result = ConexionBD.EliminarCategoriaSeleccionada(s.seleccionCategoria)
     return {"message":"Enviada peticion"}
 
+@app.post('/seleccionCategoriaTransferir')
+async def root(s:seleccionCategoria):
+    result = ConexionBD.guardarCategoriaTransferir(s.seleccionCategoria)
+    return {"message":"Enviada peticion"}
 
 @app.get('/listaHistorialCategorizado')
 async def root():
@@ -72,6 +76,17 @@ async def root(s:dinero):
     else:
         return {"message":"No se puede ingresar una fecha anterior a la del ultimo movimiento",
                 "codigo" : 404}
+        
+@app.post('/transferirDinero')
+async def root(s:dinero):
+    valid = ConexionBD.ingresarDineroTransferido(s.valor,s.fecha)
+    if valid:
+        return {"message":"Dinero Transferido exitosamente",
+                "codigo" : 202}
+    else:
+        return {"message":"No se puede ingresar una fecha anterior a la del ultimo movimiento o transferir mayor cantidad del ultimo movimiento.",
+                "codigo" : 404}
+
 
 @app.post('/eliminarCategoria')
 async def root(s:eliminacionCategoria):
